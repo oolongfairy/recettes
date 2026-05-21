@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mes Recettes">
+  <title>Mes Recettes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f1a;
+      --bg2: #1a1a2e;
+      --bg3: #22223a;
+      --accent: #e8c547;
+      --accent2: #f0a500;
+      --text: #f0ede6;
+      --text2: #9994b0;
+      --text3: #5c5878;
+      --border: rgba(255,255,255,0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 3rem 1.25rem 1.25rem;
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .app-title {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .app-title span {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .counter-badge {
+      font-size: 12px;
+      color: var(--text3);
+      background: var(--bg3);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    /* SEARCH */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text3);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 13px 14px 13px 42px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .search-input::placeholder { color: var(--text3); }
+    .search-input:focus { border-color: var(--accent); }
+
+    .filters-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    select {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 10px 12px;
+      outline: none;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5878' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    select:focus { border-color: var(--accent); }
+
+    /* IMPORT ZONE */
+    .import-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg2);
+      border: 1.5px dashed var(--text3);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      margin: 1rem 1.25rem;
+      width: calc(100% - 2.5rem);
+      transition: border-color 0.2s;
+    }
+
+    .import-btn:active { border-color: var(--accent); }
+
+    .import-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--bg3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .import-icon svg { width: 20px; height: 20px; color: var(--accent); }
+
+    .import-text-main {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .import-text-sub {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* TAGS */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 1.25rem 0.75rem;
+    }
+
+    .tag {
+      background: rgba(232, 197, 71, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(232, 197, 71, 0.3);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    /* RESULTS */
+    .results {
+      flex: 1;
+      padding: 0 1.25rem 6rem;
+      overflow-y: auto;
+    }
+
+    .results-count {
+      font-size: 12px;
+      color: var(--text3);
+      margin-bottom: 12px;
+      padding-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .empty-state small {
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    /* RECIPE CARD */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      margin-bottom: 10px;
+      animation: fadeUp 0.2s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .card-name {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .badge-type {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--bg3);
+      color: var(--text2);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .badge-time {
+      font-size: 11px;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .badge-time svg { width: 12px; height: 12px; }
+
+    .card-ingredients {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .card-ingredients.missing {
+      color: var(--text3);
+      font-style: italic;
+    }
+
+    mark {
+      background: rgba(232, 197, 71, 0.25);
+      color: var(--accent);
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 6px 12px;
+      background: rgba(232, 197, 71, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(232, 197, 71, 0.2);
+      transition: background 0.15s;
+    }
+
+    .card-link:active { background: rgba(232, 197, 71, 0.2); }
+    .card-link svg { width: 13px; height: 13px; }
+
+    /* WARNING no ingredients */
+    .warn-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      background: #f0a500;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-top">
+      <h1 class="app-title">Mes <span>recettes</span></h1>
+      <span class="counter-badge" id="counter">0 recette</span>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" type="search" id="searchInput" placeholder="Œufs, courgette, lardons…" oninput="filtrer()" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="filters-row">
+      <select id="typeFilter" onchange="filtrer()">
+        <option value="">Tous les types</option>
+      </select>
+      <select id="tempsFilter" onchange="filtrer()">
+        <option value="">Tout le temps</option>
+        <option value="15">≤ 15 min</option>
+        <option value="30">≤ 30 min</option>
+        <option value="45">≤ 45 min</option>
+        <option value="60">≤ 1h</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="import-btn" for="fileInput" id="importZone">
+    <div class="import-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    </div>
+    <div>
+      <span class="import-text-main" id="importLabel">Importer mon fichier Excel</span>
+      <span class="import-text-sub">Colonnes : Nom · Ingrédients · Temps · Type · Lien</span>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" onchange="chargerExcel(this)">
+  </label>
+
+  <div class="tags" id="tags"></div>
+
+  <div class="results" id="results">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <p>Importez votre Excel</p>
+      <small>Vos 500 recettes apparaîtront ici</small>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let allRecettes = [];
+
+function chargerExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'binary' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      allRecettes = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0]) continue;
+        allRecettes.push({
+          nom: String(r[0] || '').trim(),
+          ingredients: String(r[1] || '').trim(),
+          temps: r[2] ? parseInt(r[2]) : null,
+          type: String(r[3] || '').trim(),
+          lien: String(r[4] || '').trim()
+        });
+      }
+      document.getElementById('importLabel').textContent = '✓ ' + file.name;
+      document.getElementById('counter').textContent = allRecettes.length + ' recette' + (allRecettes.length > 1 ? 's' : '');
+      peuplerTypes();
+      filtrer();
+    } catch(err) {
+      document.getElementById('importLabel').textContent = '⚠ Erreur — vérifiez le format .xlsx';
+    }
+  };
+  reader.readAsBinaryString(file);
+}
+
+function peuplerTypes() {
+  const types = [...new Set(allRecettes.map(r => r.type).filter(Boolean))].sort();
+  const sel = document.getElementById('typeFilter');
+  sel.innerHTML = '<option value="">Tous les types</option>';
+  types.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t; o.textContent = t;
+    sel.appendChild(o);
+  });
+}
+
+function filtrer() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const type = document.getElementById('typeFilter').value;
+  const tempsMax = parseInt(document.getElementById('tempsFilter').value) || null;
+  const mots = query ? query.split(/[\s,;]+/).filter(m => m.length > 1) : [];
+
+  afficherTags(mots);
+
+  if (allRecettes.length === 0) return;
+
+  const resultats = allRecettes.filter(r => {
+    if (type && r.type !== type) return false;
+    if (tempsMax && r.temps && r.temps > tempsMax) return false;
+    if (mots.length === 0) return true;
+    if (!r.ingredients) return false;
+    const ing = r.ingredients.toLowerCase();
+    return mots.some(m => ing.includes(m));
+  });
+
+  afficher(resultats, mots);
+}
+
+function afficherTags(mots) {
+  const c = document.getElementById('tags');
+  c.innerHTML = mots.map(m => `<span class="tag">${esc(m)}</span>`).join('');
+}
+
+function afficher(resultats, mots) {
+  const zone = document.getElementById('results');
+
+  if (resultats.length === 0) {
+    zone.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <p>Aucune recette</p>
+      <small>Essayez d'autres ingrédients</small>
+    </div>`;
+    return;
+  }
+
+  let html = `<p class="results-count">${resultats.length} recette${resultats.length > 1 ? 's' : ''} trouvée${resultats.length > 1 ? 's' : ''}</p>`;
+
+  resultats.forEach((r, i) => {
+    const ingHtml = r.ingredients
+      ? surlignerMots(esc(r.ingredients), mots)
+      : `<span class="warn-dot"></span>Ingrédients non renseignés`;
+    const ingClass = r.ingredients ? 'card-ingredients' : 'card-ingredients missing';
+
+    const tempsHtml = r.temps ? `
+      <span class="badge-time">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ${r.temps} min
+      </span>` : '';
+
+    const typeHtml = r.type ? `<span class="badge-type">${esc(r.type)}</span>` : '';
+
+    const lienHtml = r.lien ? `
+      <a class="card-link" href="${esc(r.lien)}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Voir la recette
+      </a>` : '';
+
+    html += `
+    <div class="card" style="animation-delay:${Math.min(i * 0.03, 0.3)}s">
+      <div class="card-header">
+        <p class="card-name">${esc(r.nom)}</p>
+        <div class="card-meta">${typeHtml}${tempsHtml}</div>
+      </div>
+      <p class="${ingClass}">${ingHtml}</p>
+      ${lienHtml}
+    </div>`;
+  });
+
+  zone.innerHTML = html;
+}
+
+function surlignerMots(texte, mots) {
+  if (!mots.length) return texte;
+  let r = texte;
+  mots.forEach(m => {
+    const re = new RegExp('(' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    r = r.replace(re, '<mark>$1</mark>');
+  });
+  return r;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
