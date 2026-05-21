@@ -38,317 +38,147 @@
       overscroll-behavior: none;
     }
 
-    .app {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-    }
+    .app { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
 
-    /* HEADER */
     .header {
       padding: 3rem 1.25rem 1.25rem;
       background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: sticky; top: 0; z-index: 10;
     }
 
-    .header-top {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
 
-    .app-title {
-      font-family: 'Fraunces', serif;
-      font-size: 28px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.5px;
-    }
+    .app-title { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+    .app-title span { color: var(--accent); font-style: italic; }
 
-    .app-title span {
-      color: var(--accent);
-      font-style: italic;
-    }
+    .counter-badge { font-size: 12px; color: var(--text3); background: var(--bg3); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); }
 
-    .counter-badge {
-      font-size: 12px;
-      color: var(--text3);
-      background: var(--bg3);
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-    }
+    .filters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 
-    /* SEARCH */
-    .search-wrap {
-      position: relative;
-      margin-bottom: 10px;
+    select {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 12px;
+      outline: none; width: 100%; -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5878' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
     }
+    select:focus { border-color: var(--accent); }
 
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      color: var(--text3);
-      pointer-events: none;
+    /* MODE TABS */
+    .mode-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .mode-tab {
+      flex: 1; padding: 9px 0; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: var(--bg3); color: var(--text3); font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s;
     }
+    .mode-tab.active { background: var(--accent); color: #0f0f1a; border-color: var(--accent); }
 
+    /* IMPORT */
+    .import-btn {
+      display: flex; align-items: center; gap: 10px; background: var(--bg2);
+      border: 1.5px dashed var(--text3); border-radius: var(--radius); padding: 1rem 1.25rem;
+      cursor: pointer; width: calc(100% - 2.5rem); margin: 1rem 1.25rem; transition: border-color 0.2s;
+    }
+    .import-btn:active { border-color: var(--accent); }
+    .import-icon { width: 36px; height: 36px; background: var(--bg3); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .import-icon svg { width: 20px; height: 20px; color: var(--accent); }
+    .import-text-main { font-size: 14px; font-weight: 500; color: var(--text); display: block; margin-bottom: 2px; }
+    .import-text-sub { font-size: 12px; color: var(--text3); }
+
+    /* FRIGO PANEL */
+    .frigo-panel { padding: 0 1.25rem; }
+
+    .frigo-search-wrap { position: relative; margin-bottom: 10px; }
+    .frigo-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text3); pointer-events: none; }
+    .frigo-search {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+      padding: 10px 12px 10px 36px; outline: none;
+    }
+    .frigo-search:focus { border-color: var(--accent); }
+    .frigo-search::placeholder { color: var(--text3); }
+
+    .frigo-selected-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px; min-height: 24px;
+    }
+    .frigo-selected-label { font-size: 12px; color: var(--text3); }
+    .frigo-clear { font-size: 12px; color: var(--accent); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; }
+
+    .frigo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 0; }
+    .chip-selected {
+      background: rgba(232,197,71,0.2); color: var(--accent); border: 1px solid rgba(232,197,71,0.4);
+      font-size: 12px; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .chip-selected::after { content: '×'; font-size: 14px; }
+
+    .frigo-list { display: flex; flex-direction: column; gap: 4px; max-height: 260px; overflow-y: auto; padding-right: 2px; }
+    .frigo-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer; transition: border-color 0.15s; user-select: none;
+    }
+    .frigo-item:active { border-color: var(--accent); }
+    .frigo-item.checked { border-color: rgba(232,197,71,0.4); background: rgba(232,197,71,0.06); }
+
+    .frigo-checkbox {
+      width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--text3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s;
+    }
+    .frigo-item.checked .frigo-checkbox { background: var(--accent); border-color: var(--accent); }
+    .frigo-checkbox svg { width: 11px; height: 11px; color: #0f0f1a; opacity: 0; transition: opacity 0.15s; }
+    .frigo-item.checked .frigo-checkbox svg { opacity: 1; }
+
+    .frigo-name { font-size: 14px; color: var(--text); flex: 1; }
+    .frigo-count { font-size: 11px; color: var(--text3); }
+
+    .frigo-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 1.5rem 0; }
+
+    /* RECHERCHE PANEL */
+    .search-panel { padding: 0 1.25rem; }
+    .search-wrap { position: relative; margin-bottom: 10px; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text3); pointer-events: none; }
     .search-input {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      padding: 13px 14px 13px 42px;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
+      width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+      padding: 13px 14px 13px 42px; outline: none; transition: border-color 0.2s; -webkit-appearance: none;
     }
-
     .search-input::placeholder { color: var(--text3); }
     .search-input:focus { border-color: var(--accent); }
 
-    .filters-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    select {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text2);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      padding: 10px 12px;
-      outline: none;
-      width: 100%;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235c5878' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-    }
-
-    select:focus { border-color: var(--accent); }
-
-    /* IMPORT ZONE */
-    .import-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--bg2);
-      border: 1.5px dashed var(--text3);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-      margin: 1rem 1.25rem;
-      width: calc(100% - 2.5rem);
-      transition: border-color 0.2s;
-    }
-
-    .import-btn:active { border-color: var(--accent); }
-
-    .import-icon {
-      width: 36px;
-      height: 36px;
-      background: var(--bg3);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .import-icon svg { width: 20px; height: 20px; color: var(--accent); }
-
-    .import-text-main {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .import-text-sub {
-      font-size: 12px;
-      color: var(--text3);
-    }
-
-    /* TAGS */
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 0 1.25rem 0.75rem;
-    }
-
-    .tag {
-      background: rgba(232, 197, 71, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(232, 197, 71, 0.3);
-      font-size: 12px;
-      padding: 3px 10px;
-      border-radius: 999px;
-    }
-
     /* RESULTS */
-    .results {
-      flex: 1;
-      padding: 0 1.25rem 6rem;
-      overflow-y: auto;
-    }
+    .results { flex: 1; padding: 0.75rem 1.25rem 6rem; overflow-y: auto; }
 
-    .results-count {
-      font-size: 12px;
-      color: var(--text3);
-      margin-bottom: 12px;
-      padding-top: 4px;
-    }
+    .results-count { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
 
-    .empty-state {
-      text-align: center;
-      padding: 4rem 1rem;
-    }
+    .empty-state { text-align: center; padding: 4rem 1rem; }
+    .empty-state svg { width: 48px; height: 48px; color: var(--text3); margin-bottom: 1rem; }
+    .empty-state p { font-family: 'Fraunces', serif; font-size: 18px; color: var(--text2); margin-bottom: 6px; }
+    .empty-state small { font-size: 13px; color: var(--text3); }
 
-    .empty-state svg {
-      width: 48px;
-      height: 48px;
-      color: var(--text3);
-      margin-bottom: 1rem;
-    }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; margin-bottom: 10px; animation: fadeUp 0.2s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    .empty-state p {
-      font-family: 'Fraunces', serif;
-      font-size: 18px;
-      color: var(--text2);
-      margin-bottom: 6px;
-    }
-
-    .empty-state small {
-      font-size: 13px;
-      color: var(--text3);
-    }
-
-    /* RECIPE CARD */
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.1rem;
-      margin-bottom: 10px;
-      animation: fadeUp 0.2s ease both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .card-name {
-      font-family: 'Fraunces', serif;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
-      flex: 1;
-    }
-
-    .card-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .badge-type {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--bg3);
-      color: var(--text2);
-      border: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    .badge-time {
-      font-size: 11px;
-      color: var(--accent2);
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .card-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3; flex: 1; }
+    .card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .badge-type { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--bg3); color: var(--text2); border: 1px solid var(--border); white-space: nowrap; }
+    .badge-time { font-size: 11px; color: var(--accent2); display: flex; align-items: center; gap: 3px; }
     .badge-time svg { width: 12px; height: 12px; }
 
-    .card-ingredients {
-      font-size: 13px;
-      color: var(--text2);
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
+    .card-ingredients { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+    .card-ingredients.missing { color: var(--text3); font-style: italic; }
 
-    .card-ingredients.missing {
-      color: var(--text3);
-      font-style: italic;
-    }
-
-    mark {
-      background: rgba(232, 197, 71, 0.25);
-      color: var(--accent);
-      border-radius: 3px;
-      padding: 0 2px;
-    }
+    mark { background: rgba(232,197,71,0.25); color: var(--accent); border-radius: 3px; padding: 0 2px; }
 
     .card-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 13px;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-      padding: 6px 12px;
-      background: rgba(232, 197, 71, 0.1);
-      border-radius: 8px;
-      border: 1px solid rgba(232, 197, 71, 0.2);
-      transition: background 0.15s;
+      display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--accent);
+      text-decoration: none; font-weight: 500; padding: 6px 12px;
+      background: rgba(232,197,71,0.1); border-radius: 8px; border: 1px solid rgba(232,197,71,0.2);
     }
-
-    .card-link:active { background: rgba(232, 197, 71, 0.2); }
     .card-link svg { width: 13px; height: 13px; }
-
-    /* WARNING no ingredients */
-    .warn-dot {
-      display: inline-block;
-      width: 7px; height: 7px;
-      background: #f0a500;
-      border-radius: 50%;
-      margin-right: 5px;
-      vertical-align: middle;
-    }
+    .warn-dot { display: inline-block; width: 7px; height: 7px; background: #f0a500; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
   </style>
 </head>
 <body>
@@ -359,14 +189,44 @@
       <h1 class="app-title">Mes <span>recettes</span></h1>
       <span class="counter-badge" id="counter">0 recette</span>
     </div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('frigo')" id="tab-frigo">Mon frigo</button>
+      <button class="mode-tab" onclick="setMode('recherche')" id="tab-recherche">Recherche libre</button>
+    </div>
+  </div>
+
+  <div id="statusBar" style="margin:0.75rem 1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);">
+    <svg id="statusIcon" style="width:16px;height:16px;flex-shrink:0;animation:spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+    <span id="statusLabel">Chargement des recettes…</span>
+    <label style="margin-left:auto;cursor:pointer;color:var(--text3);font-size:12px;text-decoration:underline;" for="fileInput">Mettre à jour</label>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" onchange="chargerExcelManuel(this)">
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+  <!-- MODE FRIGO -->
+  <div class="frigo-panel" id="panel-frigo">
+    <div class="frigo-search-wrap">
+      <svg class="frigo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="frigo-search" type="search" id="frigoSearch" placeholder="Filtrer les ingrédients…" oninput="renderFrigoList()" autocomplete="off">
+    </div>
+    <div class="frigo-selected-bar">
+      <span class="frigo-selected-label" id="frigoSelectedLabel">Aucun ingrédient sélectionné</span>
+      <button class="frigo-clear" onclick="toutDecocher()" id="frigoClearBtn" style="display:none;">Tout effacer</button>
+    </div>
+    <div class="frigo-chips" id="frigoChips"></div>
+    <div class="frigo-list" id="frigoList">
+      <p class="frigo-empty">Chargement en cours…</p>
+    </div>
+  </div>
+
+  <!-- MODE RECHERCHE LIBRE -->
+  <div class="search-panel" id="panel-recherche" style="display:none;">
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="search-input" type="search" id="searchInput" placeholder="Œufs, courgette, lardons…" oninput="filtrer()" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
     <div class="filters-row">
-      <select id="typeFilter" onchange="filtrer()">
-        <option value="">Tous les types</option>
-      </select>
+      <select id="typeFilter" onchange="filtrer()"><option value="">Tous les types</option></select>
       <select id="tempsFilter" onchange="filtrer()">
         <option value="">Tout le temps</option>
         <option value="15">≤ 15 min</option>
@@ -377,19 +237,6 @@
     </div>
   </div>
 
-  <label class="import-btn" for="fileInput" id="importZone">
-    <div class="import-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-    </div>
-    <div>
-      <span class="import-text-main" id="importLabel">Importer mon fichier Excel</span>
-      <span class="import-text-sub">Colonnes : Nom · Ingrédients · Temps · Type · Lien</span>
-    </div>
-    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" onchange="chargerExcel(this)">
-  </label>
-
-  <div class="tags" id="tags"></div>
-
   <div class="results" id="results">
     <div class="empty-state">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
@@ -399,40 +246,166 @@
   </div>
 
 </div>
-
 <script>
 let allRecettes = [];
+let tousIngredients = [];
+let selectionFrigo = new Set();
+let modeActuel = 'frigo';
 
-function chargerExcel(input) {
+function setMode(mode) {
+  modeActuel = mode;
+  document.getElementById('tab-frigo').classList.toggle('active', mode === 'frigo');
+  document.getElementById('tab-recherche').classList.toggle('active', mode === 'recherche');
+  document.getElementById('panel-frigo').style.display = mode === 'frigo' ? '' : 'none';
+  document.getElementById('panel-recherche').style.display = mode === 'recherche' ? '' : 'none';
+  filtrer();
+}
+
+function setStatus(icone, texte, couleur) {
+  const icon = document.getElementById('statusIcon');
+  const label = document.getElementById('statusLabel');
+  label.textContent = texte;
+  label.style.color = couleur || 'var(--text3)';
+  icon.style.animation = icone === 'spin' ? 'spin 1s linear infinite' : 'none';
+  icon.innerHTML = icone === 'spin'
+    ? '<path d="M21 12a9 9 0 11-6.219-8.56"/>'
+    : icone === 'ok'
+      ? '<polyline points="20 6 9 17 4 12"/>'
+      : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+}
+
+function traiterDonnees(arrayBuffer) {
+  const wb = XLSX.read(arrayBuffer, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+  allRecettes = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0]) continue;
+    allRecettes.push({
+      nom: String(r[0] || '').trim(),
+      ingredients: String(r[1] || '').trim(),
+      temps: r[2] ? parseInt(r[2]) : null,
+      type: String(r[3] || '').trim(),
+      lien: String(r[4] || '').trim()
+    });
+  }
+  document.getElementById('counter').textContent = allRecettes.length + ' recette' + (allRecettes.length > 1 ? 's' : '');
+  extraireIngredients();
+  peuplerTypes();
+  renderFrigoList();
+  filtrer();
+}
+
+async function chargerExcelAuto() {
+  try {
+    const resp = await fetch('recettes.xlsx');
+    if (!resp.ok) throw new Error('fichier introuvable');
+    const buffer = await resp.arrayBuffer();
+    traiterDonnees(buffer);
+    setStatus('ok', 'Recettes chargées', 'var(--accent)');
+  } catch(err) {
+    setStatus('warn', 'Fichier non trouvé — importez-le manuellement', 'var(--accent2)');
+  }
+}
+
+function chargerExcelManuel(input) {
   const file = input.files[0];
   if (!file) return;
+  setStatus('spin', 'Chargement…', 'var(--text3)');
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const wb = XLSX.read(e.target.result, { type: 'binary' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      allRecettes = [];
-      for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        if (!r[0]) continue;
-        allRecettes.push({
-          nom: String(r[0] || '').trim(),
-          ingredients: String(r[1] || '').trim(),
-          temps: r[2] ? parseInt(r[2]) : null,
-          type: String(r[3] || '').trim(),
-          lien: String(r[4] || '').trim()
-        });
-      }
-      document.getElementById('importLabel').textContent = '✓ ' + file.name;
-      document.getElementById('counter').textContent = allRecettes.length + ' recette' + (allRecettes.length > 1 ? 's' : '');
-      peuplerTypes();
-      filtrer();
+      traiterDonnees(e.target.result);
+      setStatus('ok', '✓ ' + file.name, 'var(--accent)');
     } catch(err) {
-      document.getElementById('importLabel').textContent = '⚠ Erreur — vérifiez le format .xlsx';
+      setStatus('warn', '⚠ Erreur — vérifiez le format .xlsx', 'var(--accent2)');
     }
   };
-  reader.readAsBinaryString(file);
+  reader.readAsArrayBuffer(file);
+}
+
+window.addEventListener('DOMContentLoaded', chargerExcelAuto);
+
+function extraireIngredients() {
+  const compteur = {};
+  allRecettes.forEach(r => {
+    if (!r.ingredients) return;
+    r.ingredients.split(',').forEach(ing => {
+      const nom = ing.trim();
+      if (nom) compteur[nom] = (compteur[nom] || 0) + 1;
+    });
+  });
+  tousIngredients = Object.entries(compteur)
+    .sort((a, b) => a[0].localeCompare(b[0], 'fr'))
+    .map(([nom, count]) => ({ nom, count }));
+}
+
+function renderFrigoList() {
+  const filtre = document.getElementById('frigoSearch').value.toLowerCase().trim();
+  const liste = document.getElementById('frigoList');
+
+  if (tousIngredients.length === 0) {
+    liste.innerHTML = '<p class="frigo-empty">Importez votre Excel pour voir les ingrédients</p>';
+    return;
+  }
+
+  const visibles = filtre
+    ? tousIngredients.filter(i => i.nom.toLowerCase().includes(filtre))
+    : tousIngredients;
+
+  if (visibles.length === 0) {
+    liste.innerHTML = '<p class="frigo-empty">Aucun ingrédient trouvé</p>';
+    return;
+  }
+
+  liste.innerHTML = visibles.map(({ nom, count }) => {
+    const checked = selectionFrigo.has(nom);
+    return `<div class="frigo-item${checked ? ' checked' : ''}" onclick="toggleIngredient('${esc(nom).replace(/'/g,"\\'")}')">
+      <div class="frigo-checkbox">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1.5,6 5,9.5 10.5,2.5"/></svg>
+      </div>
+      <span class="frigo-name">${esc(nom)}</span>
+      <span class="frigo-count">${count} recette${count > 1 ? 's' : ''}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleIngredient(nom) {
+  if (selectionFrigo.has(nom)) {
+    selectionFrigo.delete(nom);
+  } else {
+    selectionFrigo.add(nom);
+  }
+  renderFrigoList();
+  renderChips();
+  filtrer();
+}
+
+function renderChips() {
+  const chips = document.getElementById('frigoChips');
+  const label = document.getElementById('frigoSelectedLabel');
+  const clearBtn = document.getElementById('frigoClearBtn');
+  const sel = [...selectionFrigo];
+
+  if (sel.length === 0) {
+    chips.innerHTML = '';
+    label.textContent = 'Aucun ingrédient sélectionné';
+    clearBtn.style.display = 'none';
+  } else {
+    label.textContent = sel.length + ' ingrédient' + (sel.length > 1 ? 's' : '') + ' sélectionné' + (sel.length > 1 ? 's' : '');
+    clearBtn.style.display = '';
+    chips.innerHTML = sel.map(nom =>
+      `<span class="chip-selected" onclick="toggleIngredient('${esc(nom).replace(/'/g,"\\'")}'')">${esc(nom)}</span>`
+    ).join('');
+  }
+}
+
+function toutDecocher() {
+  selectionFrigo.clear();
+  renderFrigoList();
+  renderChips();
+  filtrer();
 }
 
 function peuplerTypes() {
@@ -447,30 +420,38 @@ function peuplerTypes() {
 }
 
 function filtrer() {
-  const query = document.getElementById('searchInput').value.toLowerCase().trim();
-  const type = document.getElementById('typeFilter').value;
-  const tempsMax = parseInt(document.getElementById('tempsFilter').value) || null;
-  const mots = query ? query.split(/[\s,;]+/).filter(m => m.length > 1) : [];
-
-  afficherTags(mots);
-
   if (allRecettes.length === 0) return;
 
-  const resultats = allRecettes.filter(r => {
-    if (type && r.type !== type) return false;
-    if (tempsMax && r.temps && r.temps > tempsMax) return false;
-    if (mots.length === 0) return true;
-    if (!r.ingredients) return false;
-    const ing = r.ingredients.toLowerCase();
-    return mots.some(m => ing.includes(m));
-  });
+  let resultats, motsActifs;
 
-  afficher(resultats, mots);
-}
+  if (modeActuel === 'frigo') {
+    mostActifs = [...selectionFrigo];
+    if (mostActifs.length === 0) {
+      afficher(allRecettes, []);
+      return;
+    }
+    resultats = allRecettes.filter(r => {
+      if (!r.ingredients) return false;
+      const ing = r.ingredients.toLowerCase();
+      return mostActifs.every(m => ing.includes(m.toLowerCase()));
+    });
+    afficher(resultats, mostActifs);
+  } else {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const type = document.getElementById('typeFilter').value;
+    const tempsMax = parseInt(document.getElementById('tempsFilter').value) || null;
+    const mots = query ? query.split(/[\s,;]+/).filter(m => m.length > 1) : [];
 
-function afficherTags(mots) {
-  const c = document.getElementById('tags');
-  c.innerHTML = mots.map(m => `<span class="tag">${esc(m)}</span>`).join('');
+    resultats = allRecettes.filter(r => {
+      if (type && r.type !== type) return false;
+      if (tempsMax && r.temps && r.temps > tempsMax) return false;
+      if (mots.length === 0) return true;
+      if (!r.ingredients) return false;
+      const ing = r.ingredients.toLowerCase();
+      return mots.some(m => ing.includes(m));
+    });
+    afficher(resultats, mots);
+  }
 }
 
 function afficher(resultats, mots) {
