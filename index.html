@@ -205,6 +205,10 @@
 
   <!-- MODE FRIGO -->
   <div class="frigo-panel" id="panel-frigo">
+    <div class="frigo-search-wrap" style="margin-bottom:8px;">
+      <svg class="frigo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="frigo-search" type="search" id="nomSearch" placeholder="Rechercher une recette par nom…" oninput="filtrer()" autocomplete="off">
+    </div>
     <div class="frigo-search-wrap">
       <svg class="frigo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="frigo-search" type="search" id="frigoSearch" placeholder="Filtrer les ingrédients…" oninput="renderFrigoList()" autocomplete="off">
@@ -221,6 +225,10 @@
 
   <!-- MODE RECHERCHE LIBRE -->
   <div class="search-panel" id="panel-recherche" style="display:none;">
+    <div class="search-wrap" style="margin-bottom:8px;">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" type="search" id="nomSearchR" placeholder="Rechercher une recette par nom…" oninput="filtrer()" autocomplete="off">
+    </div>
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="search-input" type="search" id="searchInput" placeholder="Œufs, courgette, lardons…" oninput="filtrer()" autocomplete="off" autocorrect="off" spellcheck="false">
@@ -426,23 +434,27 @@ function filtrer() {
 
   if (modeActuel === 'frigo') {
     mostActifs = [...selectionFrigo];
-    if (mostActifs.length === 0) {
-      afficher(allRecettes, []);
-      return;
-    }
+    const nomQuery = document.getElementById('nomSearch').value.toLowerCase().trim();
+
     resultats = allRecettes.filter(r => {
+      // Filtre par nom
+      if (nomQuery && !r.nom.toLowerCase().includes(nomQuery)) return false;
+      // Filtre par ingrédients cochés
+      if (mostActifs.length === 0) return true;
       if (!r.ingredients) return false;
       const ing = r.ingredients.toLowerCase();
       return mostActifs.every(m => ing.includes(m.toLowerCase()));
     });
-    afficher(resultats, mostActifs);
+    afficher(resultats, mostActifs, nomQuery);
   } else {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const nomQueryR = document.getElementById('nomSearchR').value.toLowerCase().trim();
     const type = document.getElementById('typeFilter').value;
     const tempsMax = parseInt(document.getElementById('tempsFilter').value) || null;
     const mots = query ? query.split(/[\s,;]+/).filter(m => m.length > 1) : [];
 
     resultats = allRecettes.filter(r => {
+      if (nomQueryR && !r.nom.toLowerCase().includes(nomQueryR)) return false;
       if (type && r.type !== type) return false;
       if (tempsMax && r.temps && r.temps > tempsMax) return false;
       if (mots.length === 0) return true;
@@ -450,18 +462,18 @@ function filtrer() {
       const ing = r.ingredients.toLowerCase();
       return mots.some(m => ing.includes(m));
     });
-    afficher(resultats, mots);
+    afficher(resultats, mots, nomQueryR);
   }
 }
 
-function afficher(resultats, mots) {
+function afficher(resultats, mots, nomQuery) {
   const zone = document.getElementById('results');
 
   if (resultats.length === 0) {
     zone.innerHTML = `<div class="empty-state">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       <p>Aucune recette</p>
-      <small>Essayez d'autres ingrédients</small>
+      <small>Essayez d'autres critères</small>
     </div>`;
     return;
   }
@@ -469,6 +481,10 @@ function afficher(resultats, mots) {
   let html = `<p class="results-count">${resultats.length} recette${resultats.length > 1 ? 's' : ''} trouvée${resultats.length > 1 ? 's' : ''}</p>`;
 
   resultats.forEach((r, i) => {
+    const nomHtml = nomQuery
+      ? surlignerMots(esc(r.nom), [nomQuery])
+      : esc(r.nom);
+
     const ingHtml = r.ingredients
       ? surlignerMots(esc(r.ingredients), mots)
       : `<span class="warn-dot"></span>Ingrédients non renseignés`;
@@ -491,7 +507,7 @@ function afficher(resultats, mots) {
     html += `
     <div class="card" style="animation-delay:${Math.min(i * 0.03, 0.3)}s">
       <div class="card-header">
-        <p class="card-name">${esc(r.nom)}</p>
+        <p class="card-name">${nomHtml}</p>
         <div class="card-meta">${typeHtml}${tempsHtml}</div>
       </div>
       <p class="${ingClass}">${ingHtml}</p>
